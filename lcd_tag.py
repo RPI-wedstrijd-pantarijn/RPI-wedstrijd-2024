@@ -32,14 +32,19 @@ try:
             WritePoints()
             lcd.write_string("Je mag eten"[:32])
             print("Food is ready")
+            time.sleep(3)
             #NOTE: Here we can open the door
         else:
-            TimeUntil = IDDate - datetime.datetime.now()
-            TimeUntilSmall = str(TimeUntil).split(".", maxsplit=1)[0]
-            print(TimeUntilSmall)
-            lcd.write_string("Tijd over:      " + (TimeUntilSmall)[:16])
+            Remaining = 3
+            while Remaining > 0 :
+                Remaining -= 1
+                TimeUntil = IDDate - datetime.datetime.now()
+                TimeUntilSmall = str(TimeUntil).split(".", maxsplit=1)[0]
+                print(TimeUntilSmall)
+                lcd.clear()
+                lcd.write_string(f"Tijd over:      {TimeUntilSmall}"[:32])
+                time.sleep(1)
 
-        time.sleep(3)
         lcd.clear()
 
 except KeyboardInterrupt:
