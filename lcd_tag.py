@@ -16,9 +16,8 @@ try:
         current_datetime = datetime.datetime.now()
         ExtraTime = datetime.timedelta(seconds=10)
 
-        newAmount = current_datetime + ExtraTime
-        reader.write(str(newAmount))
-        return newAmount
+        newTime = current_datetime + ExtraTime
+        reader.write(str(newTime))
 
     while True:
         tagid, text = reader.read()
@@ -58,5 +57,8 @@ except IOError as e:
 
 except Exception as e:
     print(f"An error occurred: {e}")
+    lcd.clear()
+    GPIO.cleanup()
+finally:
     lcd.clear()
     GPIO.cleanup()
