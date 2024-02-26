@@ -22,15 +22,14 @@ try:
 
     CurrentId = None
     CurrentText = None
-    newAmount = datetime.datetime.now()  # Initialize newAmount
 
     while True:
-        id, text = reader.read()
+        tagid, text = reader.read()
         try:
             IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
         except ValueError:
             WritePoints()
-            id, text = reader.read()
+            tagid, text = reader.read()
             IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
         if datetime.datetime.now() > IDDate:
             WritePoints()
