@@ -29,14 +29,14 @@ try:
         IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
         if datetime.datetime.now() > IDDate:
             WritePoints()
-            lcd.write_string("You can get yourfood"[:32])
+            lcd.write_string("Je mag eten"[:32])
             print("Food is ready")
             #NOTE: Here we can open the door
         else:
             TimeUntil = IDDate - datetime.datetime.now()
             TimeUntilSmall = str(TimeUntil).split(".")[0]
             print(TimeUntilSmall)
-            lcd.write_string("Time left:      " + (TimeUntilSmall)[:16])
+            lcd.write_string("Tijd over:      " + (TimeUntilSmall)[:16])
 
         time.sleep(3)
         lcd.clear()
