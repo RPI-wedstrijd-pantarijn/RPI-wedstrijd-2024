@@ -23,7 +23,7 @@ enable SPI and I2C:
 sudo raspi-config
 ```
 
-Now go to Interface options > enable SPI and the same with I2C
+Now go to Interface options > enable SPI and the same with I2C<br>
 Now click on finish and reboot by doing
 
 ```shell
