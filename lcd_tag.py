@@ -38,7 +38,7 @@ try:
             #NOTE: Here we can open the door
         else:
             TimeUntil = IDDate - datetime.datetime.now()
-            TimeUntilSmall = str(TimeUntil).split(".")[0]
+            TimeUntilSmall = str(TimeUntil).split(".", maxsplit=1)[0]
             print(TimeUntilSmall)
             lcd.write_string("Tijd over:      " + (TimeUntilSmall)[:16])
 
