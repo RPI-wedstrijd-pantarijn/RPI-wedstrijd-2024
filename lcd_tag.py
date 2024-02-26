@@ -27,7 +27,6 @@ try:
     while True:
         id, text = reader.read()
         IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
-
         if datetime.datetime.now() > IDDate:
             WritePoints()
             lcd.write_string("You can get yourfood"[:32])
