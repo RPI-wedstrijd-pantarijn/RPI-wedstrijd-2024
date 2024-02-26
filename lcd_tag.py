@@ -14,9 +14,9 @@ try:
 
     def WritePoints():
         current_datetime = datetime.datetime.now()
-        one_day = datetime.timedelta(seconds=10)
+        ExtraTime = datetime.timedelta(seconds=10)
 
-        newAmount = current_datetime + one_day
+        newAmount = current_datetime + ExtraTime
         reader.write(str(newAmount))
         return newAmount
 
@@ -46,6 +46,11 @@ try:
         lcd.clear()
 
 except KeyboardInterrupt:
+    lcd.clear()
+    GPIO.cleanup()
+
+except IOError as e:
+    print(f"An I/O error occurred: {e}")
     lcd.clear()
     GPIO.cleanup()
 
