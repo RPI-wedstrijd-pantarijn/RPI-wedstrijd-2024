@@ -20,9 +20,6 @@ try:
         reader.write(str(newAmount))
         return newAmount
 
-    CurrentId = None
-    CurrentText = None
-
     while True:
         tagid, text = reader.read()
         try:
