@@ -1,4 +1,5 @@
-How to install:
+How to install
+-
 Update the system:
 
 ```shell
