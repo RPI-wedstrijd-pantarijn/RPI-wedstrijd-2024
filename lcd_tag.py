@@ -7,10 +7,27 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 from RPLCD.i2c import CharLCD
 
+servoPIN = 4
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(servoPIN, GPIO.OUT)
+
+
+
 try:
     reader = SimpleMFRC522()
     lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2, dotsize=8)
     lcd.clear()
+
+    p = GPIO.PWM(servoPIN, 50)
+    p.start(2.5)
+
+    def setAngle(angle, pin):
+        duty = angle / 18 + 3
+        GPIO.output(pin, True)
+        p.ChangeDutyCycle(duty)
+        time.sleep(1)
+        GPIO.output(pin, False)
+        p.ChangeDutyCycle(duty)
 
     def WritePoints():
         current_datetime = datetime.datetime.now()
@@ -20,6 +37,7 @@ try:
         reader.write(str(newTime))
 
     while True:
+        setAngle(0, 4)
         tagid, text = reader.read()
         try:
             IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
@@ -31,8 +49,17 @@ try:
             WritePoints()
             lcd.write_string("Je mag eten"[:32])
             print("Food is ready")
-            time.sleep(3)
-            #NOTE: Here we can open the door
+            time.sleep(2)
+            lcd.clear()
+            lcd.write_string("Scan opniew om te sluiten"[:32])
+            setAngle(90, 4)
+            notScanned = True
+            while notScanned:
+                newTagid, newText = reader.read()
+                if newTagid == tagid:
+                    setAngle(0, 4)
+                    notScanned = False
+
         else:
             Remaining = 3
             while Remaining > 0 :
