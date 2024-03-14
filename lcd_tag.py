@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 
 import datetime
+import json
+import os
 import time
 
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 from RPLCD.i2c import CharLCD
 
+from jsontest import Opened
+
 servoPIN = 4
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(servoPIN, GPIO.OUT)
-
-
 
 try:
     reader = SimpleMFRC522()
@@ -20,8 +22,33 @@ try:
 
     p = GPIO.PWM(servoPIN, 50)
     p.start(2.5)
+    
+    def CheckIfOpened():
+        with open("data.json", "r", encoding="utf8") as file_content:
+            OpenedData = json.load(file_content)
+            if not OpenedData["Servo1"]:
+                return 1
+            elif not OpenedData["Servo2"]:
+                return 2
+            return None
 
-    def setAngle(angle, pin):
+    def WriteData(Servo, Data):
+        with open("data.json", "r", encoding="utf8") as file_content:
+            OpenedData = json.load(file_content)
+        OpenedData[Servo] = Data
+        with open("data.json", "w", encoding="utf8") as File_handle:
+            json.dump(OpenedData, File_handle)
+
+    def setAngle(angle, check):
+        if check:
+            if CheckIfOpened() == 1:
+                pin = servoPIN
+            elif CheckIfOpened() == 2:
+                pin = servoPIN
+            elif CheckIfOpened() == None:
+                exit()
+        else:
+            pin = servoPIN
         duty = angle / 18 + 3
         GPIO.output(pin, True)
         p.ChangeDutyCycle(duty)
@@ -36,8 +63,18 @@ try:
         newTime = current_datetime + ExtraTime
         reader.write(str(newTime))
 
+    if os.path.exists("data.json"):
+        pass
+    else:
+        data = {
+            "1Opened": False,
+            "2Opened": False,
+        }
+        with open("data.json", "w", encoding="utf8") as file_handle:
+            json.dump(data, file_handle)
+
     while True:
-        setAngle(0, 4)
+        setAngle(0, False)
         tagid, text = reader.read()
         try:
             IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
@@ -52,12 +89,12 @@ try:
             time.sleep(2)
             lcd.clear()
             lcd.write_string("Scan opniew om te sluiten"[:32])
-            setAngle(90, 4)
+            setAngle(90, True)
             notScanned = True
             while notScanned:
                 newTagid, newText = reader.read()
                 if newTagid == tagid:
-                    setAngle(0, 4)
+                    setAngle(0, True)
                     notScanned = False
 
         else:
