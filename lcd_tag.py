@@ -9,19 +9,25 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 from RPLCD.i2c import CharLCD
 
-servoPIN = 4
+servo1PIN = 4
+servo2PIN = 17
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(servoPIN, GPIO.OUT)
+GPIO.setup(servo1PIN, GPIO.OUT)
 
-masterTagID = 3522762959469
+GPIO.setup(servo2PIN, GPIO.OUT)
+
+masterTagID = 522762959469
 
 try:
     reader = SimpleMFRC522()
     lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2, dotsize=8)
     lcd.clear()
 
-    p = GPIO.PWM(servoPIN, 50)
+    p = GPIO.PWM(servo1PIN, 50)
     p.start(2.5)
+
+    p2 = GPIO.PWM(servo2PIN, 50)
+    p2.start(2.5)
     
     def CloseAll(id):
         with open("data.json", "r", encoding="utf8") as file_content:
@@ -70,33 +76,58 @@ try:
         OpenedData[Servo] = Data
         with open("data.json", "w", encoding="utf8") as File_handle:
             json.dump(OpenedData, File_handle)
-        print(Servo)
 
     def setAngle(angle, check, PIN=None):
-        pin = servoPIN
+        global pin
+        global p
+        UseP = True
         if check:
-            if CheckIfOpened() == 1:
+            OpenCheck = CheckIfOpened()
+            if OpenCheck == 1:
                 WriteData("Servo1", True)
                 print("1")
-                pin = servoPIN
-            elif CheckIfOpened() == 2:
+                UseP = True
+                pin = servo1PIN
+            elif OpenCheck == 2:
                 WriteData("Servo2", True)
                 print("2")
-                pin = servoPIN
-            elif CheckIfOpened() == None:
-                exit()
-        
+                UseP = False
+                pin = servo2PIN
+            elif OpenCheck == None:
+                lcd.clear()
+                lcd.write_string("Alles is leeg!"[:32])
+                time.sleep(2)
+                lcd.clear()
+                lcd.write_string("Vul de bakjes alstublieft bij"[:32])
+                time.sleep(2)
+                return False
         if PIN == 1:
-            pin = servoPIN
+            pin = servo1PIN
+            UseP = True
         elif PIN == 2:
-            pin = servoPIN
+            pin = servo2PIN
+            UseP = False
+        
+        if not check and PIN == None:
+            print("When you don't want to check, please provide a pin")
+            return False
 
-        duty = angle / 18 + 3
-        GPIO.output(pin, True)
-        p.ChangeDutyCycle(duty)
-        time.sleep(1)
-        GPIO.output(pin, False)
-        p.ChangeDutyCycle(duty)
+        if UseP:
+            duty = angle / 18 + 3
+            GPIO.output(pin, True)
+            p.ChangeDutyCycle(duty)
+            time.sleep(1)
+            GPIO.output(pin, False)
+            p.ChangeDutyCycle(duty)
+            return True, pin
+        else:
+            duty = angle / 18 + 3
+            GPIO.output(pin, True)
+            p2.ChangeDutyCycle(duty)
+            time.sleep(1)
+            GPIO.output(pin, False)
+            p2.ChangeDutyCycle(duty)
+            return True, pin
 
     def WritePoints():
         current_datetime = datetime.datetime.now()
@@ -116,9 +147,9 @@ try:
             json.dump(data, file_handle)
 
     while True:
-        setAngle(0, False)
+        setAngle(0, False, 1)
+        setAngle(0, False, 2)
         tagid, text = reader.read()
-        
         if tagid == masterTagID:
             lcd.write_string("U bent de hervuller"[:32])
             time.sleep(2)
@@ -148,14 +179,22 @@ try:
                 print("Food is ready")
                 time.sleep(2)
                 lcd.clear()
-                lcd.write_string("Scan opniew om te sluiten"[:32])
-                setAngle(90, True)
-                notScanned = True
-                while notScanned:
-                    newTagid, newText = reader.read()
-                    if newTagid == tagid:
-                        setAngle(0, True)
-                        notScanned = False
+                Result = setAngle(90, True)
+                AngleSet = Result[0]
+                PinVal = Result[1]
+                print(PinVal)
+                if AngleSet:
+                    lcd.write_string("Scan opniew om te sluiten"[:32])
+                    notScanned = True
+                    while notScanned:
+                        newTagid, newText = reader.read()
+                        if newTagid == tagid:
+                            setAngle(0, False, PinVal)
+                            notScanned = False
+                        else:
+                            pass
+                else:
+                    pass
 
             else:
                 Remaining = 3
