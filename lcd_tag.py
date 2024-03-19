@@ -20,7 +20,9 @@ masterTagID = 522762959469
 
 try:
     reader = SimpleMFRC522()
-    lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2, dotsize=8)
+    lcd = CharLCD(
+        i2c_expander="PCF8574", address=0x27, port=1, cols=16, rows=2, dotsize=8
+    )
     lcd.clear()
 
     p = GPIO.PWM(servo1PIN, 50)
@@ -28,7 +30,7 @@ try:
 
     p2 = GPIO.PWM(servo2PIN, 50)
     p2.start(2.5)
-    
+
     def CloseAll(id):
         with open("data.json", "r", encoding="utf8") as file_content:
             FileData = json.load(file_content)
@@ -59,8 +61,9 @@ try:
                         json.dump(FileData, file_handler)
                     notScanned = False
         if not FileData["Servo1"] and not FileData["Servo2"]:
+            lcd.clear()
             lcd.write_string("Niks om bij te  vullen"[:32])
-    
+
     def CheckIfOpened():
         with open("data.json", "r", encoding="utf8") as file_content:
             OpenedData = json.load(file_content)
@@ -107,7 +110,7 @@ try:
         elif PIN == 2:
             pin = servo2PIN
             UseP = False
-        
+
         if not check and PIN == None:
             print("When you don't want to check, please provide a pin")
             return False
@@ -151,6 +154,7 @@ try:
         setAngle(0, False, 2)
         tagid, text = reader.read()
         if tagid == masterTagID:
+            lcd.clear()
             lcd.write_string("U bent de hervuller"[:32])
             time.sleep(2)
             lcd.clear()
@@ -168,13 +172,18 @@ try:
             lcd.clear()
         else:
             try:
-                IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
+                IDDate = datetime.datetime.strptime(
+                    text.rstrip(), "%Y-%m-%d %H:%M:%S.%f"
+                )
             except ValueError:
                 WritePoints()
                 tagid, text = reader.read()
-                IDDate = datetime.datetime.strptime(text.rstrip(), '%Y-%m-%d %H:%M:%S.%f')
+                IDDate = datetime.datetime.strptime(
+                    text.rstrip(), "%Y-%m-%d %H:%M:%S.%f"
+                )
             if datetime.datetime.now() > IDDate:
                 WritePoints()
+                lcd.clear()
                 lcd.write_string("Je mag eten"[:32])
                 print("Food is ready")
                 time.sleep(2)
@@ -184,6 +193,7 @@ try:
                 PinVal = Result[1]
                 print(PinVal)
                 if AngleSet:
+                    lcd.clear()
                     lcd.write_string("Scan opniew om te sluiten"[:32])
                     notScanned = True
                     while notScanned:
@@ -198,7 +208,7 @@ try:
 
             else:
                 Remaining = 3
-                while Remaining > 0 :
+                while Remaining > 0:
                     Remaining -= 1
                     TimeUntil = IDDate - datetime.datetime.now()
                     TimeUntilSmall = str(TimeUntil).split(".", maxsplit=1)[0]
