@@ -24,14 +24,14 @@ Zet SPI en I2C aan:
 sudo raspi-config
 ```
 
-Ga nu naar Interface options > enable SPI and the same with I2C<br>
+Ga nu naar Interface options > enable SPI en hetzelfde met I2C<br>
 Klik nu op finish en start opnieuw op door in te voeren:
 
 ```shell
 sudo reboot
 ```
 
-CD in the repository:
+CD in de repository:
 
 ```shell
 cd RPI-wedstrijd-2024
