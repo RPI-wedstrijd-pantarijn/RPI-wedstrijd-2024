@@ -1,4 +1,4 @@
-## How to install
+## Hoe te installeren
 
 Update het systeem:
 
