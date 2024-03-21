@@ -1,55 +1,55 @@
-How to install
--
-Update the system:
+## How to install
+
+Update het systeem:
 
 ```shell
 sudo apt update && sudo apt upgrade && sudo reboot
 ```
 
-Install neccesary packages:
+Install benodigde programma's:
 
 ```shell
 sudo apt-get install -y python3 python3-pip python3-venv i2c-tools python3-smbus git
 ```
 
-Clone the repo:
+Kloon de repository:
 
 ```shell
 git clone https://github.com/RPI-wedstrijd-pantarijn/RPI-wedstrijd-2024.git
 ```
 
-enable SPI and I2C:
+Zet SPI en I2C aan:
 
 ```shell
 sudo raspi-config
 ```
 
-Now go to Interface options > enable SPI and the same with I2C<br>
-Now click on finish and reboot by doing
+Ga nu naar Interface options > enable SPI and the same with I2C<br>
+Klik nu op finish en start opnieuw op door in te voeren:
 
 ```shell
 sudo reboot
 ```
 
-CD into the repo:
+CD in the repository:
 
 ```shell
 cd RPI-wedstrijd-2024
 ```
 
-Create a virtual enviroment:
+Maak een virtual enviroment:
 
 ```shell
 python3 -m venv env
 ```
 
-Source the virtual enviroment:
+Source de virtual enviroment:
 
 ```shell
 source env/bin/activate
 ```
 
-Install pip packages:
+Installeer pip programma's:
 
 ```shell
 python3 -m pip install -r requirements.txt
