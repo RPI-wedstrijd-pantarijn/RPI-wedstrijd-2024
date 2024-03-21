@@ -59,6 +59,7 @@ try:
                         json.dump(FileData, file_handler)
                     notScanned = False
         if not FileData["Servo1"] and not FileData["Servo2"]:
+            lcd.clear()
             lcd.write_string("Niks om bij te  vullen"[:32])
     
     def CheckIfOpened():
@@ -100,7 +101,7 @@ try:
                 lcd.clear()
                 lcd.write_string("Vul de bakjes alstublieft bij"[:32])
                 time.sleep(2)
-                return False
+                return False, None
         if PIN == 1:
             pin = servo1PIN
             UseP = True
@@ -131,7 +132,7 @@ try:
 
     def WritePoints():
         current_datetime = datetime.datetime.now()
-        ExtraTime = datetime.timedelta(seconds=10)
+        ExtraTime = datetime.timedelta(seconds=20)
 
         newTime = current_datetime + ExtraTime
         reader.write(str(newTime))
