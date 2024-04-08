@@ -139,7 +139,7 @@ try:
         current_datetime = datetime.datetime.now()
         OldTime = datetime.datetime.strptime(timeToCheck, "%Y-%m-%d %H:%M:%S.%f")
         difference = current_datetime - OldTime
-        hourDifference = round(difference.total_seconds() / 60)
+        hourDifference = round(difference.total_seconds() / 1800)
         Points = hourDifference
         lcd.clear()
         if Points == 1:
@@ -179,7 +179,7 @@ try:
 
     def WritePoints():
         current_datetime = datetime.datetime.now()
-        ExtraTime = datetime.timedelta(seconds=20)
+        ExtraTime = datetime.timedelta(hours=2)
 
         newTime = current_datetime + ExtraTime
         reader.write(str(newTime))
