@@ -88,12 +88,10 @@ try:
             OpenCheck = CheckIfOpened()
             if OpenCheck == 1:
                 WriteData("Servo1", True)
-                print("1")
                 UseP = True
                 pin = servo1PIN
             elif OpenCheck == 2:
                 WriteData("Servo2", True)
-                print("2")
                 UseP = False
                 pin = servo2PIN
             elif OpenCheck == None:
@@ -135,9 +133,9 @@ try:
     def WriteHighscore(User, timeToCheck):
         timeToCheck = timeToCheck.rstrip()
         User = str(User)
-        print(timeToCheck)
         current_datetime = datetime.datetime.now()
         OldTime = datetime.datetime.strptime(timeToCheck, "%Y-%m-%d %H:%M:%S.%f")
+        OldTime = OldTime - datetime.timedelta(hours=2)
         difference = current_datetime - OldTime
         hourDifference = round(difference.total_seconds() / 1800)
         Points = hourDifference
@@ -148,9 +146,7 @@ try:
             lcd.write_string(f"U heeft {str(Points)} punten"[:32])
         time.sleep(2)
         with open("highscore.json", "r", encoding="utf8") as file_handle:
-            print("Opened")
             data = json.load(file_handle)
-            print("data")
             if User in data:
                 if Points > data[User]:
                     lcd.clear()
@@ -160,7 +156,7 @@ try:
                         json.dump(data, file_data)
                 else:
                     lcd.clear()
-                    lcd.write_string("Dit is geen nieuw record")
+                    lcd.write_string("Dit is geen nieuw record"[:32])
                     time.sleep(2)
                     lcd.clear()
                     if data[User] == 1:
@@ -238,13 +234,11 @@ try:
                 WriteHighscore(tagid, text)
                 lcd.clear()
                 lcd.write_string("Je mag eten"[:32])
-                print("Food is ready")
                 time.sleep(2)
                 lcd.clear()
                 Result = setAngle(90, True)
                 AngleSet = Result[0]
                 PinVal = Result[1]
-                print(PinVal)
                 if AngleSet:
                     lcd.clear()
                     lcd.write_string("Scan opniew om te sluiten"[:32])
@@ -265,7 +259,6 @@ try:
                     Remaining -= 1
                     TimeUntil = IDDate - datetime.datetime.now()
                     TimeUntilSmall = str(TimeUntil).split(".", maxsplit=1)[0]
-                    print(TimeUntilSmall)
                     lcd.clear()
                     lcd.write_string(f"Tijd over:      {TimeUntilSmall}"[:32])
                     time.sleep(1)
