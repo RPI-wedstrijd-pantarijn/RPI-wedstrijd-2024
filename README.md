@@ -54,3 +54,23 @@ Installeer pip programma's:
 ```shell
 python3 -m pip install -r requirements.txt
 ```
+
+Om het script nu te starten doe:
+
+```shell
+python3 main.py
+```
+
+Optioneel kunt u ook het script automatisch opstarten wanneer de pi opstart:
+
+```shell
+crontab -e
+```
+
+Kies nu uw favoriete text-bewerker en voeg deze regel toe op het einde van het bestand:
+
+```shell
+@reboot /home/pi/raspiwedstrijd\ rfid/autostart.sh
+```
+
+Sla nu het bestand op en ga eruit.
