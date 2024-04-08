@@ -132,6 +132,51 @@ try:
             p2.ChangeDutyCycle(duty)
             return True, pin
 
+    def WriteHighscore(User, timeToCheck):
+        timeToCheck = timeToCheck.rstrip()
+        User = str(User)
+        print(timeToCheck)
+        current_datetime = datetime.datetime.now()
+        OldTime = datetime.datetime.strptime(timeToCheck, "%Y-%m-%d %H:%M:%S.%f")
+        difference = current_datetime - OldTime
+        hourDifference = round(difference.total_seconds() / 60)
+        Points = hourDifference
+        lcd.clear()
+        if Points == 1:
+            lcd.write_string(f"U heeft {str(Points)} punt"[:32])
+        else:
+            lcd.write_string(f"U heeft {str(Points)} punten"[:32])
+        time.sleep(2)
+        with open("highscore.json", "r", encoding="utf8") as file_handle:
+            print("Opened")
+            data = json.load(file_handle)
+            print("data")
+            if User in data:
+                if Points > data[User]:
+                    lcd.clear()
+                    lcd.write_string("Dit is uw nieuwe record")
+                    data[User] = Points
+                    with open("highscore.json", "w", encoding="utf8") as file_data:
+                        json.dump(data, file_data)
+                else:
+                    lcd.clear()
+                    lcd.write_string("Dit is geen nieuw record")
+                    time.sleep(2)
+                    lcd.clear()
+                    if data[User] == 1:
+                        lcd.write_string(f"Uw record is {data[User]} punt"[:32])
+                    else:
+                        lcd.write_string(f"Uw record is {data[User]} punten"[:32])
+            else:
+                lcd.clear()
+                lcd.write_string("Dit is uw eerste record")
+                data[User] = Points
+                with open("highscore.json", "w", encoding="utf8") as file_data:
+                    json.dump(data, file_data)
+        time.sleep(2)
+        lcd.clear()
+                
+
     def WritePoints():
         current_datetime = datetime.datetime.now()
         ExtraTime = datetime.timedelta(seconds=20)
@@ -147,6 +192,13 @@ try:
             "Servo2": False,
         }
         with open("data.json", "w", encoding="utf8") as file_handle:
+            json.dump(data, file_handle)
+    
+    if os.path.exists("highscore.json"):
+        pass
+    else:
+        with open("highscore.json", "w", encoding="utf8") as file_handle:
+            data = {}
             json.dump(data, file_handle)
 
     while True:
@@ -183,6 +235,7 @@ try:
                 )
             if datetime.datetime.now() > IDDate:
                 WritePoints()
+                WriteHighscore(tagid, text)
                 lcd.clear()
                 lcd.write_string("Je mag eten"[:32])
                 print("Food is ready")
