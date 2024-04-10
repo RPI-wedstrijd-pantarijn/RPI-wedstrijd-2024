@@ -135,7 +135,6 @@ try:
         User = str(User)
         current_datetime = datetime.datetime.now()
         OldTime = datetime.datetime.strptime(timeToCheck, "%Y-%m-%d %H:%M:%S.%f")
-        OldTime = OldTime - datetime.timedelta(hours=2)
         difference = current_datetime - OldTime
         hourDifference = round(difference.total_seconds() / 1800)
         Points = hourDifference
